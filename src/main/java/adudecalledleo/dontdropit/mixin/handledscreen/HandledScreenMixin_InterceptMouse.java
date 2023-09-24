@@ -6,6 +6,8 @@ import adudecalledleo.dontdropit.ModKeyBindings;
 import adudecalledleo.dontdropit.config.DropBehaviorOverride;
 import adudecalledleo.dontdropit.config.FavoredChecker;
 import adudecalledleo.dontdropit.config.ModConfig;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -126,7 +128,7 @@ public abstract class HandledScreenMixin_InterceptMouse<T extends ScreenHandler>
     }
 
     @Inject(method = "drawMouseoverTooltip", at = @At("TAIL"))
-    public void drawDropBlockTooltip(MatrixStack matrixStack, int mouseX, int mouseY, CallbackInfo ci) {
+    public void drawDropBlockTooltip(DrawContext context, int mouseX, int mouseY, CallbackInfo ci) {
         ItemStack cursorStack = handler.getCursorStack();
         if (cursorStack.isEmpty() || !isClickOutsideBounds(mouseX, mouseY, x, y, 0))
             return;
@@ -164,6 +166,6 @@ public abstract class HandledScreenMixin_InterceptMouse<T extends ScreenHandler>
                                 .styled(style -> style.withBold(true).withColor(Formatting.WHITE))))
                         .styled(style -> style.withColor(Formatting.GRAY)));
         }
-        renderTooltip(matrixStack, tooltipTexts, mouseX, mouseY);
+        context.drawTooltip(MinecraftClient.getInstance().textRenderer, tooltipTexts, mouseX, mouseY);
     }
 }

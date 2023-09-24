@@ -6,6 +6,7 @@ import adudecalledleo.dontdropit.ModKeyBindings;
 import adudecalledleo.dontdropit.config.FavoredChecker;
 import adudecalledleo.dontdropit.config.ModConfig;
 import adudecalledleo.dontdropit.duck.HandledScreenHooks;
+import net.minecraft.client.gui.DrawContext;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -78,11 +79,11 @@ public abstract class HandledScreenMixin_HooksAndMisc extends Screen implements 
 
     @Inject(method = "drawSlot",
             at = @At(value = "INVOKE",
-                     target = "Lnet/minecraft/client/render/item/ItemRenderer;renderGuiItemOverlay(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V",
+                     target = "Lnet/minecraft/client/gui/DrawContext;drawItem(Lnet/minecraft/item/ItemStack;III)V",
                      shift = At.Shift.AFTER))
-    public void drawSlotProgressOverlay(MatrixStack matrixStack, Slot slot, CallbackInfo ci) {
+    public void drawSlotProgressOverlay(DrawContext context, Slot slot, CallbackInfo ci) {
         if (IgnoredSlots.isSlotIgnored(slot))
             return;
-        DropDelayRenderer.renderOverlay(matrixStack, slot.getStack(), slot.x, slot.y, getZOffset());
+        DropDelayRenderer.renderOverlay(context, slot.getStack(), slot.x, slot.y, 0);
     }
 }
