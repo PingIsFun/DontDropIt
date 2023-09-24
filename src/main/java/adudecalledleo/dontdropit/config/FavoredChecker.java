@@ -11,10 +11,9 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.*;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
 
 public class FavoredChecker {
     private static final HashSet<Item> FAVORED_ITEMS = new HashSet<>();
@@ -23,19 +22,19 @@ public class FavoredChecker {
     private static final HashSet<TagKey<Enchantment>> FAVORED_ENCHANTMENT_TAGS = new HashSet<>();
 
     static void updateFavoredSets(ModConfig config) {
-        updateFavoredSet(FAVORED_ITEMS, config.favorites.items, Registry.ITEM::getOrEmpty);
-        updateFavoredSet(FAVORED_ENCHANTMENTS, config.favorites.enchantments, Registry.ENCHANTMENT::getOrEmpty);
+        updateFavoredSet(FAVORED_ITEMS, config.favorites.items, Registries.ITEM::getOrEmpty);
+        updateFavoredSet(FAVORED_ENCHANTMENTS, config.favorites.enchantments, Registries.ENCHANTMENT::getOrEmpty);
         updateFavoredSet(FAVORED_ITEM_TAGS, config.favorites.itemTags, id -> {
-            var key = TagKey.of(Registry.ITEM_KEY, id);
-            if (Registry.ITEM.containsTag(key)) {
+            var key = TagKey.of(RegistryKeys.ITEM, id);
+            if (Registries.ITEM.containsId(key.id())) {
                 return Optional.of(key);
             } else {
                 return Optional.empty();
             }
         });
         updateFavoredSet(FAVORED_ENCHANTMENT_TAGS, config.favorites.enchantmentTags, id -> {
-            var key = TagKey.of(Registry.ENCHANTMENT_KEY, id);
-            if (Registry.ENCHANTMENT.containsTag(key)) {
+            var key = TagKey.of(RegistryKeys.ENCHANTMENT, id);
+            if (Registries.ENCHANTMENT.containsId(key.id())) {
                 return Optional.of(key);
             } else {
                 return Optional.empty();
@@ -71,8 +70,8 @@ public class FavoredChecker {
             boolean matching = FAVORED_ENCHANTMENTS.contains(ench);
             if (!matching) {
                 final var enchEntry =
-                        Registry.ENCHANTMENT.getEntry(Registry.ENCHANTMENT.getRawId(ench))
-                                .orElseThrow(() -> new RuntimeException("Couldn't get registry entry for " + Registry.ENCHANTMENT.getId(ench)));
+                        Registries.ENCHANTMENT.getEntry(Registries.ENCHANTMENT.getRawId(ench))
+                                .orElseThrow(() -> new RuntimeException("Couldn't get registry entry for " + Registries.ENCHANTMENT.getId(ench)));
                 matching = FAVORED_ENCHANTMENT_TAGS.stream().anyMatch(enchEntry::isIn);
             }
             if (!matching) {

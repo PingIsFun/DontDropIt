@@ -15,10 +15,10 @@ import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.*;
 
 import static adudecalledleo.dontdropit.config.ModConfigLogger.LOGGER;
 
@@ -100,8 +100,8 @@ public class ModConfig implements ConfigData {
 
         private static List<String> getRareItemIds() {
             ArrayList<String> itemIds = new ArrayList<>();
-            for (Identifier id : Registry.ITEM.getIds()) {
-                Item item = Registry.ITEM.get(id);
+            for (Identifier id : Registries.ITEM.getIds()) {
+                Item item = Registries.ITEM.get(id);
                 if (item.getRarity(new ItemStack(item)) != Rarity.COMMON)
                     itemIds.add(id.toString());
             }
@@ -110,8 +110,8 @@ public class ModConfig implements ConfigData {
 
         private static List<String> getEnchantmentIds() {
             ArrayList<String> enchIds = new ArrayList<>();
-            for (Identifier id : Registry.ENCHANTMENT.getIds()) {
-                Enchantment enchantment = Registry.ENCHANTMENT.get(id);
+            for (Identifier id : Registries.ENCHANTMENT.getIds()) {
+                Enchantment enchantment = Registries.ENCHANTMENT.get(id);
                 if (enchantment == null || enchantment.isCursed())
                     continue;
                 enchIds.add(id.toString());
@@ -145,10 +145,10 @@ public class ModConfig implements ConfigData {
             }
             restoreDefaults = Boolean.FALSE;
             if (removeInvalidIds) {
-                removeInvalidIdsFrom(items, "items", Registry.ITEM);
-                removeInvalidTagIdsFrom(itemTags, "item", Registry.ITEM);
-                removeInvalidIdsFrom(enchantments, "enchantments", Registry.ENCHANTMENT);
-                removeInvalidTagIdsFrom(enchantmentTags, "enchantment", Registry.ENCHANTMENT);
+                removeInvalidIdsFrom(items, "items", Registries.ITEM);
+                removeInvalidTagIdsFrom(itemTags, "item", Registries.ITEM);
+                removeInvalidIdsFrom(enchantments, "enchantments", Registries.ENCHANTMENT);
+                removeInvalidTagIdsFrom(enchantmentTags, "enchantment", Registries.ENCHANTMENT);
             }
         }
 
@@ -187,7 +187,7 @@ public class ModConfig implements ConfigData {
                     continue;
                 }
                 var tagKey = TagKey.of(registry.getKey(), id);
-                if (!registry.containsTag(tagKey)) {
+                if (!registry.containsId(tagKey.id())) {
                     LOGGER.warn("Favorites: Found unregistered identifier \"{}\" in favored {} tags list, removing", id, description);
                     it.remove();
                 }
