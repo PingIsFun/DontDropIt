@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -33,6 +34,7 @@ public class DontDropItToast implements Toast {
 			return this.displayDuration;
 		}
 	}
+	private static final Identifier TEXTURE = new Identifier("toast/advancement");
 
 	private final Type type;
 	private final int width;
@@ -87,7 +89,7 @@ public class DontDropItToast implements Toast {
 		int width = this.getWidth();
 		int height;
 		if (width == 160 && this.lines.size() <= 1) {
-			context.drawTexture(TEXTURE, 0, 0, 0, 64, width, this.getHeight());
+			context.drawGuiTexture(TEXTURE, 0, 0, width, this.getHeight());
 		} else {
 			height = this.getHeight();
 			int l = Math.min(4, height - 28);
@@ -116,13 +118,13 @@ public class DontDropItToast implements Toast {
 	private void drawPart(DrawContext context, int width, int textureV, int y, int height) {
 		int i = textureV == 0 ? 20 : 5;
 		int j = Math.min(60, width - i);
-		context.drawTexture(Toast.TEXTURE,0, y, 0, 64 + textureV, i, height);
+		context.drawGuiTexture(TEXTURE,0, y, i, height);
 
 		for(int k = i; k < width - j; k += 64) {
-			context.drawTexture(Toast.TEXTURE, k, y, 32, 64 + textureV, Math.min(64, width - k - j), height);
+			context.drawGuiTexture(TEXTURE, k, y, Math.min(64, width - k - j), height);
 		}
 
-		context.drawTexture(Toast.TEXTURE, width - j, y, 160 - j, 64 + textureV, j, height);
+		context.drawGuiTexture(TEXTURE, width - j, y, j, height);
 	}
 
 	public void setContent(Text title, @Nullable Text description) {
